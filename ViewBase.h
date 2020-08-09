@@ -1,6 +1,6 @@
-/*! \file
- *  \author    Hugo3132
- *  \copyright 2-clause BSD license
+/**
+ * @author    Hugo3132
+ * @copyright 2-clause BSD license
  */
 #pragma once
 
@@ -75,6 +75,18 @@ public:
       activate();
     }
   }
+public:
+  /**
+   * @brief Copy constructor - not available
+   */
+  ViewBase(const ViewBase& other) = delete;
+
+public:
+  /**
+   * @brief Move constructor
+   */
+  ViewBase(ViewBase&& other) noexcept
+    : display(std::move(other.display)) {}
 
 public:
   /**
