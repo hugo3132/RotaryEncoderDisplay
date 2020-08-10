@@ -219,7 +219,7 @@ public:
 
 public:
   /**
-   * @brief Construct a vie object
+   * @brief Construct a view object
    *
    * @param display pointer to the display instance
    * @param encoder pointer to the encoder instance
@@ -332,7 +332,7 @@ public:
     }
 
     // Update name of the Menu
-    if (animationTickRequired && (numberOfRows != numberOfRowsUsedForItems)) {
+    if ((animationTickRequired || fullRedraw) && (numberOfRows != numberOfRowsUsedForItems)) {
       display->setCursor(0, 0);
       if (numberOfRows == 2) {
         title.animationTick(numberOfColumns - 1);

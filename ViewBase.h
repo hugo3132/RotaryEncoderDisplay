@@ -75,11 +75,21 @@ public:
       activate();
     }
   }
+
 public:
   /**
    * @brief Copy constructor - not available
    */
   ViewBase(const ViewBase& other) = delete;
+
+public:
+  /**
+   * @brief Get the refernce to the singleton current view pointer
+   */
+  static ViewBase*& getCurrentView() {
+    static ViewBase* currentViewSingleton = nullptr;
+    return currentViewSingleton;
+  }
 
 public:
   /**
