@@ -62,7 +62,6 @@ public:
       auto linebreak1 = text.indexOf('\n');
       if (linebreak1 != -1) {
         rows[i] = text.substring(0, linebreak1);
-        rows[i];
         text = text.substring(linebreak1 + 1);
       }
       else {
