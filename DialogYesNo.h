@@ -11,7 +11,7 @@ namespace lcd {
  * @brief Dialog with a yes and a no button
  */
 class DialogYesNo : public DialogBase {
-public:
+protected:
   /**
    * @brief If true yes is selected.
    */
@@ -55,17 +55,46 @@ public:
 
 public:
   /**
+   * @brief Shows the dialog modal and after closing it activates the previous
+   * view again
+   *
+   * @param yesSelected if true yes is selected by default as soon as the the
+   * dialog is displayed
+   * @return true if yes was selected
+   */
+  bool showModal(const bool& yesSelected) {
+    this->yesSelected = yesSelected;
+    lcd::ViewBase::activateView(this);
+    activatePreviousView();
+    return this->yesSelected;
+  }
+
+protected:
+  /**
    * @brief called as soon as the view becomes active
    */
   virtual void activate() {
     DialogBase::activate();
     lastDrawState = !yesSelected;
 
-    while (!encoder->getNewClick()) {
-      if (yesSelected && (encoder->getDirection() == RotaryEncoder::Direction::CLOCKWISE)) {
+    auto encoderClicked = encoder->getNewClick();
+    while (!encoderClicked) {
+      auto encoderUpdate = encoder->getDirection();
+      encoderClicked = encoder->getNewClick();
+
+      // Update the backlight timeout
+      if (encoderClicked || (encoderUpdate != RotaryEncoder::Direction::NOROTATION)) {
+        if (!getBacklightTimeoutManager().delayTimeout()) {
+          encoderClicked = false;
+          continue;
+        }
+      }
+      getBacklightTimeoutManager().tick(display);
+
+      if (yesSelected && (encoderUpdate == RotaryEncoder::Direction::CLOCKWISE)) {
         yesSelected = false;
       }
-      if (!yesSelected && (encoder->getDirection() == RotaryEncoder::Direction::COUNTERCLOCKWISE)) {
+      else if (!yesSelected && (encoderUpdate == RotaryEncoder::Direction::COUNTERCLOCKWISE)) {
         yesSelected = true;
       }
 
@@ -92,7 +121,9 @@ public:
 protected:
   /**
    * @brief called during the loop function
+   *
+   * @param forceRedraw if true everything should be redrawn
    */
-  virtual void tick() {}
+  virtual void tick(const bool& forceRedraw) {}
 };
 } // namespace lcd

@@ -42,6 +42,16 @@ public:
 
 public:
   /**
+   * @brief Shows the dialog modal and after closing it activates the previous
+   * view again
+   */
+  void showModal() {
+    lcd::ViewBase::activateView(this);
+    lcd::ViewBase::activatePreviousView();
+  }
+
+protected:
+  /**
    * @brief called as soon as the view becomes active
    */
   virtual void activate() {
@@ -50,7 +60,20 @@ public:
     display->setCursor((numberOfColumns - 4) / 2, 3);
     display->print(">OK<");
 
-    while (!encoder->getNewClick()) {
+    auto encoderClicked = encoder->getNewClick();
+    while (!encoderClicked) {
+      auto encoderUpdate = encoder->getDirection();
+      encoderClicked = encoder->getNewClick();
+
+      // Update the backlight timeout
+      if (encoderClicked || (encoderUpdate != RotaryEncoder::Direction::NOROTATION)) {
+        if (!getBacklightTimeoutManager().delayTimeout()) {
+          encoderClicked = false;
+          continue;
+        }
+      }
+      getBacklightTimeoutManager().tick(display);
+
       delay(100);
     }
   }
@@ -58,7 +81,9 @@ public:
 protected:
   /**
    * @brief called during the loop function
+   *
+   * @param forceRedraw if true everything should be redrawn
    */
-  virtual void tick() {}
+  virtual void tick(const bool& forceRedraw) {}
 };
 } // namespace lcd

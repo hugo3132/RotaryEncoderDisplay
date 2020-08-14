@@ -37,7 +37,7 @@ public:
     /**
      * @brief The text which should be displayed
      */
-    const String text;
+    String text;
 
   public:
     /**
@@ -129,6 +129,15 @@ public:
      */
     const String& getText() const {
       return text;
+    }
+
+  public:
+    /**
+     * @brief Sets the text of the item
+     */
+    void setText(const String& newText) {
+      text = newText;
+      resetAnimation();
     }
   };
 
@@ -261,13 +270,13 @@ public:
     , numberOfRows(other.numberOfRows)
     , numberOfRowsUsedForItems(other.numberOfRowsUsedForItems) {}
 
-public:
+protected:
   /**
    * @brief called as soon as the view becomes active
    */
   virtual void activate() {
     // copy special characters to display
-    ViewBase::activate();
+    ViewBase::initializeSpecialCharacters();
     display->clear();
 
     if (((int)menuItems.size() > numberOfRowsUsedForItems) && (numberOfRows > 1)) {
@@ -299,19 +308,31 @@ public:
         display->write(scScrollbarBottom);
       }
     }
-    lastMillisForAnimationRefresh = millis();
+    lastMillisForAnimationRefresh = millis() - 500;
     selection = 0;
+    tick(true);
   }
 
 public:
   /**
    * @brief called during the loop function
+   *
+   * @param forceRedraw if true everything should be redrawn
    */
-  virtual void tick() {
+  virtual void tick(const bool& forceRedraw) {
     const bool animationTickRequired = lastMillisForAnimationRefresh + 500 <= millis();
     auto encoderUpdate = encoder->getDirection();
+    auto encoderClicked = encoder->getNewClick();
     bool fullRedraw = false;
     bool redraw = animationTickRequired;
+
+    // Update the backlight timeout
+    if (encoderClicked || (encoderUpdate != RotaryEncoder::Direction::NOROTATION)) {
+      if (!getBacklightTimeoutManager().delayTimeout()) {
+        return;
+      }
+    }
+    getBacklightTimeoutManager().tick(display);
 
     // check if the scrollbar is visible
     size_t maxLength = numberOfColumns - 1;
@@ -391,7 +412,7 @@ public:
     }
 
     // check if a menu entry was selected
-    if (encoder->getNewClick()) {
+    if (encoderClicked) {
       auto itEntry = menuItems.begin();
       std::advance(itEntry, selection);
       itEntry->callback(&*itEntry);
@@ -408,11 +429,13 @@ public:
    *
    * @param text text of the menu item
    * @param callback callback as soon as the item is selected
+   * @return the new item
    */
-  void createMenuItem(
+  MenuItem& createMenuItem(
     const String& text,
     const std::function<void(MenuItem*)>& callback = [](MenuItem* item) {}) {
     menuItems.push_back(MenuItem(text, callback));
+    return menuItems.back();
   }
 };
 } // namespace lcd

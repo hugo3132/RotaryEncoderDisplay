@@ -83,7 +83,7 @@ public:
    */
   DialogBase(DialogBase&& other) noexcept = delete;
 
-public:
+protected:
   /**
    * @brief called as soon as the view becomes active
    */
@@ -97,4 +97,4 @@ public:
     display->print(rows[2]);
   }
 };
-} // namespace lcd
+} 
