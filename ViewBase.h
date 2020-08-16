@@ -103,6 +103,12 @@ protected:
    */
   ViewBase* previousView;
 
+protected:
+  /**
+   * @brief The name of the view
+   */
+  const String name;
+
 #pragma region Special characters
 public:
   /**
@@ -152,10 +158,12 @@ public:
    * @brief Construct a view object
    *
    * @param display pointer to the LCD instance
+   * @param name The name of the view
    */
-  ViewBase(LiquidCrystal_PCF8574* display)
+  ViewBase(LiquidCrystal_PCF8574* display, const String& name)
     : display(display)
-    , previousView(nullptr) {}
+    , previousView(nullptr)
+    , name(name) {}
 
 public:
   /**
@@ -169,7 +177,8 @@ public:
    */
   ViewBase(ViewBase&& other) noexcept
     : display(std::move(other.display))
-    , previousView(std::move(other.previousView)) {}
+    , previousView(std::move(other.previousView))
+    , name(std::move(other.name)) {}
 
 public:
   /**
@@ -195,6 +204,8 @@ public:
       view->previousView = getCurrentView();
       getCurrentView() = view;
       if (view) {
+        Serial.print("Activate view ");
+        Serial.println(view->name);
         view->activate();
         getBacklightTimeoutManager().delayTimeout();
         getBacklightTimeoutManager().tick(view->display);
@@ -222,6 +233,8 @@ public:
   void activatePreviousView() {
     if (previousView) {
       getCurrentView() = previousView;
+      Serial.print("Activate previous ciew ");
+      Serial.println(previousView->name);
       previousView->activate();
     }
   }

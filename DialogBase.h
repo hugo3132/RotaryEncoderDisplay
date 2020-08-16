@@ -44,17 +44,19 @@ public:
    * @brief Construct a new Dialog
    *
    * @param display pointer to the display instance
+   * @param name The name of the view
    * @param encoder pointer to the encoder instance
    * @param text the dialog text
    * @param numberOfColumns number of display-columns
    * @param numberOfRows number of display-rows
    */
   DialogBase(LiquidCrystal_PCF8574* display,
+             const String& name,
              RotaryEncoder* encoder,
              String text,
              const int& numberOfColumns,
              const int& numberOfRows)
-    : ViewBase(display)
+    : ViewBase(display, name)
     , encoder(encoder)
     , numberOfColumns(numberOfColumns)
     , numberOfRows(numberOfRows) {

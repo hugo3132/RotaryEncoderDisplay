@@ -231,17 +231,19 @@ public:
    * @brief Construct a view object
    *
    * @param display pointer to the display instance
+   * @param name The name of the view
    * @param encoder pointer to the encoder instance
    * @param title the menu title
    * @param numberOfColumns number of display-columns
    * @param numberOfRows number of display-rows
    */
   MenuView(LiquidCrystal_PCF8574* display,
+           const String& name,
            RotaryEncoder* encoder,
            const String& title,
            const int& numberOfColumns,
            const int& numberOfRows)
-    : ViewBase(display)
+    : ViewBase(display, name)
     , encoder(encoder)
     , title(title)
     , selection(0)

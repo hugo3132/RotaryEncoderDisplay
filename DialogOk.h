@@ -26,7 +26,7 @@ public:
            String text,
            const int& numberOfColumns,
            const int& numberOfRows)
-    : DialogBase(display, encoder, text, numberOfColumns, numberOfRows) {}
+    : DialogBase(display, "OK Dialog", encoder, text, numberOfColumns, numberOfRows) {}
 
 public:
   /**
@@ -47,7 +47,7 @@ public:
    */
   void showModal() {
     lcd::ViewBase::activateView(this);
-    lcd::ViewBase::activatePreviousView();
+    activatePreviousView();
   }
 
 protected:
@@ -62,6 +62,7 @@ protected:
 
     auto encoderClicked = encoder->getNewClick();
     while (!encoderClicked) {
+      encoder->tick();
       auto encoderUpdate = encoder->getDirection();
       encoderClicked = encoder->getNewClick();
 

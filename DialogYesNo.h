@@ -38,7 +38,7 @@ public:
               String text,
               const int& numberOfColumns,
               const int& numberOfRows)
-    : DialogBase(display, encoder, text, numberOfColumns, numberOfRows)
+    : DialogBase(display, "Yes/No Dialog", encoder, text, numberOfColumns, numberOfRows)
     , yesSelected(true) {}
 
 public:
@@ -79,6 +79,7 @@ protected:
 
     auto encoderClicked = encoder->getNewClick();
     while (!encoderClicked) {
+      encoder->tick();
       auto encoderUpdate = encoder->getDirection();
       encoderClicked = encoder->getNewClick();
 

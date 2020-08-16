@@ -44,7 +44,7 @@ public:
                   String text,
                   const int& numberOfColumns,
                   const int& numberOfRows)
-    : DialogBase(display, encoder, text, numberOfColumns, numberOfRows)
+    : DialogBase(display, "Yes/No/Back Dialog", encoder, text, numberOfColumns, numberOfRows)
     , selection(DialogResult::yes) {}
 
 public:
