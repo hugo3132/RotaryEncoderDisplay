@@ -225,6 +225,22 @@ public:
   static void setBacklightTimeout(unsigned long timeout) {
     getBacklightTimeoutManager().timeout = timeout;
   }
+  
+public:
+  /**
+   * @brief Get the previous view
+   */
+  const ViewBase* getPreviousView() const {
+    return previousView;
+  }
+
+public:
+  /**
+   * @brief Get the name of the view
+   */
+  const String& getName() const {
+    return name;
+  }
 
 public:
   /**
@@ -233,7 +249,7 @@ public:
   void activatePreviousView() {
     if (previousView) {
       getCurrentView() = previousView;
-      Serial.print("Activate previous ciew ");
+      Serial.print("Activate previous view ");
       Serial.println(previousView->name);
       previousView->activate();
     }
