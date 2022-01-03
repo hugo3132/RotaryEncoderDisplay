@@ -225,7 +225,15 @@ public:
   static void setBacklightTimeout(unsigned long timeout) {
     getBacklightTimeoutManager().timeout = timeout;
   }
-  
+
+public:
+  /**
+   * @brief Returns the current state of the backlight
+   */
+  static bool isBacklightOn() {
+    return getBacklightTimeoutManager().displayCurrentlyOn;
+  }
+
 public:
   /**
    * @brief Get the previous view
